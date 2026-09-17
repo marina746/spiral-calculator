@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор Кодов Кармы</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        h2 { color: #4a148c; margin-bottom: 20px; }
+        input[type="date"] {
+            width: 90%;
+            padding: 12px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            outline: none;
+        }
+        button {
+            background-color: #7b1fa2;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            width: 95%;
+            transition: 0.3s;
+        }
+        button:hover { background-color: #4a148c; }
+        .results {
+            margin-top: 25px;
+            text-align: left;
+            display: none;
+        }
+        .code-item {
+            background: #f3e5f5;
+            padding: 12px 15px;
+            margin-bottom: 10px;
+            border-left: 5px solid #7b1fa2;
+            border-radius: 4px;
+        }
+        .code-title { font-weight: bold; color: #333; font-size: 14px; display: block; margin-bottom: 4px; }
+        .code-val { font-weight: bold; color: #7b1fa2; font-size: 16px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Спираль Судьбы:
+Расчет Кодов Кармы</h2>
+    <p>Выберите дату рождения:</p>
+    <input type="date" id="birthdate">
+    <button onclick="calculateKarma()">Рассчитать Коды</button>
+
+    <div class="results" id="resultsBlock">
+        <div class="code-item">
+            <span class="code-title">КЛК 1 (Первая половина жизни):</span>
+            <span class="code-val" id="klk1">-</span>
+        </div>
+        <div class="code-item">
+            <span class="code-title">КЛК 2 (Вторая половина жизни):</span>
+            <span class="code-val" id="klk2">-</span>
+        </div>
+        <div class="code-item">
+            <span class="code-title">КЛК 3 (Главная задача на жизнь):</span>
+            <span class="code-val" id="klk3">-</span>
+        </div>
+        <div class="code-item">
+            <span class="code-title">КЛК 4 (Вспомогательный код):</span>
+            <span class="code-val" id="klk4">-</span>
+        </div>
+    </div>
+</div>
+
+<script>
+// Список названий Арканов
+const arcanes = {
+    1: "Маг", 2: "Верховная Жрица", 3: "Императрица", 4: "Император", 5: "Иерофант",
+    6: "Влюбленные", 7: "Колесница", 8: "Справедливость", 9: "Отшельник", 10: "Колесо Фортуны",
+    11: "Сила", 12: "Повешенный", 13: "Смерть", 14: "Умеренность", 15: "Дьявол",
+    16: "Башня", 17: "Звезда", 18: "Луна", 19: "Солнце", 20: "Суд",
+    21: "Мир", 22: "Шут"
+};
+
+function getArcaneText(num) {
+    return num + " — " + (arcanes[num] || "Неизвестный Аркан");
+}
+
+function reduceTo22(num) {
+    if (num > 22) return num - 22;
+    return num;
+}
+
+function applyJesterRule(num) {
+    return num === 0 ? 22 : num;
+}
+
+function sumDigits(numString) {
+    let sum = 0;
+    for (let i = 0; i < numString.length; i++) {
+        let digit = parseInt(numString[i]);
+        if (!isNaN(digit)) sum += digit;
+    }
+    return sum;
+}
+
+function calculateKarma() {
+    const dateInput = document.getElementById('birthdate').value;
+    if (!dateInput) {
+        alert('Пожалуйста, выберите дату рождения');
+        return;
+    }
+
+    const parts = dateInput.split('-');
+    if (parts.length !== 3) return;
+
+    const yearStr = parts[0]
+
+
+;
+    const monthStr = parts[1];
+    const dayStr = parts[2];
+
+    const day = parseInt(dayStr, 10);
+    const month = parseInt(monthStr, 10);
+
+    const cardDay = reduceTo22(day);
+    const cardMonth = reduceTo22(month);
+    const cardYear = reduceTo22(sumDigits(yearStr));
+
+    let res1 = Math.abs(cardDay - cardMonth);
+    let res2 = Math.abs(cardYear - cardDay);
+    
+    res1 = applyJesterRule(res1);
+    res2 = applyJesterRule(res2);
+
+    let res3 = Math.abs(res2 - res1);
+    let res4 = Math.abs(cardYear - cardMonth);
+
+    res3 = applyJesterRule(res3);
+    res4 = applyJesterRule(res4);
+
+    // Вывод на экран числа вместе с названием Аркана
+    document.getElementById('klk1').innerText = getArcaneText(res1);
+    document.getElementById('klk2').innerText = getArcaneText(res2);
+    document.getElementById('klk3').innerText = getArcaneText(res3);
+    document.getElementById('klk4').innerText = getArcaneText(res4);
+
+    document.getElementById('resultsBlock').style.display = 'block';
+}
+</script>
+
+</body>
+</html>
